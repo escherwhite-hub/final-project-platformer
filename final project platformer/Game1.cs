@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace final_project_platformer
 {
@@ -16,9 +18,14 @@ namespace final_project_platformer
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        Rectangle caveBlockRect;
+       
         Rectangle window;
         Texture2D caveBlockTexture, firsLvlBgTexture, background1Texture, background2Texture, background3Texture ;
+        MouseState mouseState;
+        List<Rectangle> caveBlocks;
+
+
+
 
         public Game1()
         {
@@ -33,8 +40,10 @@ namespace final_project_platformer
             _graphics.PreferredBackBufferHeight = window.Height;
             _graphics.PreferredBackBufferWidth = window.Width;
             _graphics.ApplyChanges();
-            
-            caveBlockRect = new Rectangle(0,0,80,80);
+
+            caveBlocks = new List<Rectangle>();
+            caveBlocks.Add(new Rectangle(0, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(80, window.Height - 80, 80, 80));
 
             base.Initialize();
         }
@@ -56,8 +65,15 @@ namespace final_project_platformer
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            
+            this.Window.Title = mouseState.Position.ToString();
+            mouseState = Mouse.GetState();
 
-            // TODO: Add your update logic here
+
+            foreach (Rectangle barrier in caveBlocks)
+                if (pacRect.Intersects(barrier))
+                    pacRect.Offset(-pacSpeed);
+
 
             base.Update(gameTime);
         }
@@ -72,8 +88,9 @@ namespace final_project_platformer
             _spriteBatch.Draw(background2Texture, window, Color.White);
             _spriteBatch.Draw(background3Texture, window, Color.White);
             _spriteBatch.Draw(firsLvlBgTexture, window, Color.White);
-            _spriteBatch.Draw(caveBlockTexture, caveBlockRect, Color. White);
-            
+            foreach (Rectangle barrier in caveBlocks)
+                _spriteBatch.Draw(caveBlockTexture, barrier, Color.White);
+
             _spriteBatch.End();
 
 
