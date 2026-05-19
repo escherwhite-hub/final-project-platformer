@@ -19,11 +19,13 @@ namespace final_project_platformer
         private SpriteBatch _spriteBatch;
 
        
-        Rectangle window;
+        Rectangle window, rockmanRect;
         Texture2D caveBlockTexture, firsLvlBgTexture, background1Texture, background2Texture, background3Texture ;
         MouseState mouseState;
+        KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
-
+        Texture2D RockmanIdleTexture;
+        Vector2 rockmanSpeed;
 
 
 
@@ -44,6 +46,10 @@ namespace final_project_platformer
             caveBlocks = new List<Rectangle>();
             caveBlocks.Add(new Rectangle(0, window.Height - 80, 80, 80));
             caveBlocks.Add(new Rectangle(80, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(160, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(420, window.Height - 80, 80, 80));
+            rockmanRect = new Rectangle(0, 658, 40, 60);
+            rockmanSpeed = Vector2.Zero;
 
             base.Initialize();
         }
@@ -57,7 +63,8 @@ namespace final_project_platformer
             background2Texture = Content.Load<Texture2D>("background2");
             background3Texture = Content.Load<Texture2D>("background3");
             firsLvlBgTexture = Content.Load<Texture2D>("background4b");
-            
+            RockmanIdleTexture = Content.Load<Texture2D>("rockmanidle");
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -65,14 +72,40 @@ namespace final_project_platformer
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            
+            keyboardState = Keyboard.GetState();
             this.Window.Title = mouseState.Position.ToString();
             mouseState = Mouse.GetState();
 
+            rockmanSpeed = Vector2.Zero;
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                rockmanSpeed.X -= 2;
+               
+            }
+            if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                rockmanSpeed.X += 2;
+               
+            }
+            if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                rockmanSpeed.Y -= 2;
+                
+            }
+            if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                rockmanSpeed.Y += 2;
+                
+            }
+            rockmanRect.Offset(rockmanSpeed);
 
+            if (!window.Contains(rockmanRect))
+            {
+                rockmanRect.Offset(-rockmanSpeed);
+            }
             foreach (Rectangle barrier in caveBlocks)
-                if (pacRect.Intersects(barrier))
-                    pacRect.Offset(-pacSpeed);
+                if (rockmanRect.Intersects(barrier))
+                    rockmanRect.Offset(-rockmanSpeed);
 
 
             base.Update(gameTime);
@@ -90,6 +123,7 @@ namespace final_project_platformer
             _spriteBatch.Draw(firsLvlBgTexture, window, Color.White);
             foreach (Rectangle barrier in caveBlocks)
                 _spriteBatch.Draw(caveBlockTexture, barrier, Color.White);
+            _spriteBatch.Draw(RockmanIdleTexture, rockmanRect, Color.White);
 
             _spriteBatch.End();
 
