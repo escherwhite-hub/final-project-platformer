@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -19,13 +20,17 @@ namespace final_project_platformer
         private SpriteBatch _spriteBatch;
 
        
-        Rectangle window, rockmanRect;
+        Rectangle window, player;
         Texture2D caveBlockTexture, firsLvlBgTexture, background1Texture, background2Texture, background3Texture ;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
         Texture2D RockmanIdleTexture;
         Vector2 rockmanSpeed;
+        Vector2 playerPosition;
+        float gravity = 0.2f; // This is how fast player accelerated downwards
+        float jumpSpeed = 13f; // This will determine the strength of the jump
+        bool onGround = false;
 
 
 
@@ -48,8 +53,19 @@ namespace final_project_platformer
             caveBlocks.Add(new Rectangle(80, window.Height - 80, 80, 80));
             caveBlocks.Add(new Rectangle(160, window.Height - 80, 80, 80));
             caveBlocks.Add(new Rectangle(420, window.Height - 80, 80, 80));
-            rockmanRect = new Rectangle(0, 658, 40, 60);
+            caveBlocks.Add(new Rectangle(500, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(580, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(660, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(740, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(820, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(900, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(980, window.Height - 80, 80, 80));
+            caveBlocks.Add(new Rectangle(660,540, 80, 80));
+            
+
             rockmanSpeed = Vector2.Zero;
+            playerPosition = new Vector2(10, 10);
+            player = new Rectangle(10, 10, 60, 80);
 
             base.Initialize();
         }
@@ -76,36 +92,65 @@ namespace final_project_platformer
             this.Window.Title = mouseState.Position.ToString();
             mouseState = Mouse.GetState();
 
-            rockmanSpeed = Vector2.Zero;
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                rockmanSpeed.X -= 2;
-               
-            }
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                rockmanSpeed.X += 2;
-               
-            }
-            if (keyboardState.IsKeyDown(Keys.Up))
-            {
-                rockmanSpeed.Y -= 2;
-                
-            }
-            if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                rockmanSpeed.Y += 2;
-                
-            }
-            rockmanRect.Offset(rockmanSpeed);
+            rockmanSpeed.X = 0f;
+            if (keyboardState.IsKeyDown(Keys.A))
+                rockmanSpeed.X += -4f;
+            if (keyboardState.IsKeyDown(Keys.D))
+                rockmanSpeed.X += 4f;
+            
+            playerPosition.X += rockmanSpeed.X;
+            player.Location = playerPosition.ToPoint();
+            foreach (Rectangle platform in caveBlocks)
+                if (player.Intersects(platform))
+                {
+                    playerPosition.X += -rockmanSpeed.X;
+                    player.Location = playerPosition.ToPoint();
+                }
 
-            if (!window.Contains(rockmanRect))
+            foreach (Rectangle platform in caveBlocks)
+                if (player.Intersects(platform))
+                {
+                    if (rockmanSpeed.Y > 0f) // player lands on platform
+                    {
+                        onGround = true;
+                        rockmanSpeed.Y = 0;
+                        playerPosition.Y = platform.Top - player.Height;
+                    }
+                    else // hits bottom of platform
+                    {
+                        rockmanSpeed.Y = 0;
+                        playerPosition.Y = platform.Bottom;
+                    }
+                    player.Location = playerPosition.ToPoint();
+                }
+
+            if (!onGround)
             {
-                rockmanRect.Offset(-rockmanSpeed);
+                rockmanSpeed.Y += gravity;
             }
-            foreach (Rectangle barrier in caveBlocks)
-                if (rockmanRect.Intersects(barrier))
-                    rockmanRect.Offset(-rockmanSpeed);
+            else
+            {
+                rockmanSpeed.Y += gravity;
+            }
+
+                playerPosition.Y += rockmanSpeed.Y;
+            player.Location = playerPosition.ToPoint();
+
+            if (!onGround)
+            {
+                rockmanSpeed.Y += gravity;
+            }
+           
+            else if (keyboardState.IsKeyDown(Keys.Space) && onGround)
+            {
+                rockmanSpeed.Y = -jumpSpeed;
+                onGround = false;
+            }
+          if (player.Top > window.Height)
+            {
+                Exit();
+            }
+
 
 
             base.Update(gameTime);
@@ -121,9 +166,9 @@ namespace final_project_platformer
             _spriteBatch.Draw(background2Texture, window, Color.White);
             _spriteBatch.Draw(background3Texture, window, Color.White);
             _spriteBatch.Draw(firsLvlBgTexture, window, Color.White);
-            foreach (Rectangle barrier in caveBlocks)
-                _spriteBatch.Draw(caveBlockTexture, barrier, Color.White);
-            _spriteBatch.Draw(RockmanIdleTexture, rockmanRect, Color.White);
+            foreach (Rectangle platform in caveBlocks)
+                _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
+            _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
 
             _spriteBatch.End();
 
