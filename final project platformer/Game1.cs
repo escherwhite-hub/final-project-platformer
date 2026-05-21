@@ -20,8 +20,8 @@ namespace final_project_platformer
         private SpriteBatch _spriteBatch;
 
        
-        Rectangle window, player;
-        Texture2D caveBlockTexture, firsLvlBgTexture, background1Texture, background2Texture, background3Texture ;
+        Rectangle window, player, spikeRect;
+        Texture2D caveBlockTexture, firsLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture ;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
@@ -60,8 +60,16 @@ namespace final_project_platformer
             caveBlocks.Add(new Rectangle(820, window.Height - 80, 80, 80));
             caveBlocks.Add(new Rectangle(900, window.Height - 80, 80, 80));
             caveBlocks.Add(new Rectangle(980, window.Height - 80, 80, 80));
-            caveBlocks.Add(new Rectangle(660,540, 80, 80));
-            
+            caveBlocks.Add(new Rectangle(660, 540, 80, 80));
+            caveBlocks.Add(new Rectangle(740, 540, 80, 80));
+            caveBlocks.Add(new Rectangle(820, 540, 80, 80));
+            caveBlocks.Add(new Rectangle(900, 540, 80, 80));
+            caveBlocks.Add(new Rectangle(980, 540, 80, 80));
+            caveBlocks.Add(new Rectangle(290, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(370, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(450, 330, 80, 80));
+
+            spikeRect = new Rectangle(390, 280, 20, 60);
 
             rockmanSpeed = Vector2.Zero;
             playerPosition = new Vector2(10, 10);
@@ -80,6 +88,7 @@ namespace final_project_platformer
             background3Texture = Content.Load<Texture2D>("background3");
             firsLvlBgTexture = Content.Load<Texture2D>("background4b");
             RockmanIdleTexture = Content.Load<Texture2D>("rockmanidle");
+            spikeTexture = Content.Load<Texture2D>("spike");
 
             // TODO: use this.Content to load your game content here
         }
@@ -100,12 +109,40 @@ namespace final_project_platformer
             
             playerPosition.X += rockmanSpeed.X;
             player.Location = playerPosition.ToPoint();
+
             foreach (Rectangle platform in caveBlocks)
                 if (player.Intersects(platform))
                 {
                     playerPosition.X += -rockmanSpeed.X;
                     player.Location = playerPosition.ToPoint();
                 }
+
+
+            if (!onGround)
+            {
+                rockmanSpeed.Y += gravity;
+            }
+            if (!onGround)
+            {
+                rockmanSpeed.Y += gravity;
+                if (rockmanSpeed.Y < 0 && keyboardState.IsKeyUp(Keys.Space))
+                    rockmanSpeed.Y /= 1.5f;
+
+            }
+
+            else if (keyboardState.IsKeyDown(Keys.Space) && onGround)
+            {
+                rockmanSpeed.Y = -jumpSpeed;
+                onGround = false;
+            }
+            else
+            {
+                rockmanSpeed.Y += gravity;
+            }
+
+
+            playerPosition.Y += rockmanSpeed.Y;
+            player.Location = playerPosition.ToPoint();
 
             foreach (Rectangle platform in caveBlocks)
                 if (player.Intersects(platform))
@@ -124,32 +161,20 @@ namespace final_project_platformer
                     player.Location = playerPosition.ToPoint();
                 }
 
-            if (!onGround)
-            {
-                rockmanSpeed.Y += gravity;
-            }
-            else
-            {
-                rockmanSpeed.Y += gravity;
-            }
-
-                playerPosition.Y += rockmanSpeed.Y;
-            player.Location = playerPosition.ToPoint();
-
-            if (!onGround)
-            {
-                rockmanSpeed.Y += gravity;
-            }
-           
-            else if (keyboardState.IsKeyDown(Keys.Space) && onGround)
-            {
-                rockmanSpeed.Y = -jumpSpeed;
-                onGround = false;
-            }
-          if (player.Top > window.Height)
+            if (player.Top > 1000)
             {
                 Exit();
             }
+
+            if (player.Intersects(spikeRect))
+            {
+                Exit();
+            }
+            
+
+           
+
+            
 
 
 
@@ -166,9 +191,11 @@ namespace final_project_platformer
             _spriteBatch.Draw(background2Texture, window, Color.White);
             _spriteBatch.Draw(background3Texture, window, Color.White);
             _spriteBatch.Draw(firsLvlBgTexture, window, Color.White);
+            _spriteBatch.Draw(spikeTexture, new Vector2(380, 277), Color.White);
             foreach (Rectangle platform in caveBlocks)
                 _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
             _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
+            
 
             _spriteBatch.End();
 
