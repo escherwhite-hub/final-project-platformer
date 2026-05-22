@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:background3.png
 
+#begin background4a.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:background4a.png
+
 #begin background4b.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -73,6 +85,18 @@
 /processorParam:TextureFormat=Color
 /build:caveBlock.png
 
+#begin key.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:key.png
+
 #begin rockmanidle.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -96,4 +120,23 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:spike.png
+
+#begin title.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:title.spritefont
+
+#begin X:/My Drive/Downloads/portal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:X:/My Drive/Downloads/portal.png;portal.png
 
