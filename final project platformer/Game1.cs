@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -73,6 +74,7 @@ namespace final_project_platformer
             caveBlocks.Add(new Rectangle(450, 330, 80, 80));
             caveBlocks.Add(new Rectangle(-40, 170, 80, 80));
             caveBlocks.Add(new Rectangle(40, 170, 80, 80));
+            
 
             spikeRect = new Rectangle(390, 280, 20, 60);
             keyRect = new Rectangle(20, 105, 30, 60);
@@ -82,7 +84,9 @@ namespace final_project_platformer
             playerPosition = new Vector2(10, 700);
             player = new Rectangle(10, 700, 60, 80);
 
-            base.Initialize();
+           
+
+                base.Initialize();
         }
 
         protected override void LoadContent()
@@ -112,75 +116,80 @@ namespace final_project_platformer
             this.Window.Title = mouseState.Position.ToString();
             mouseState = Mouse.GetState();
 
+            rockmanSpeed.X = 0f;
+            if (keyboardState.IsKeyDown(Keys.A))
+                rockmanSpeed.X += -4f;
+            if (keyboardState.IsKeyDown(Keys.D))
+                rockmanSpeed.X += 4f;
+
+            playerPosition.X += rockmanSpeed.X;
+            player.Location = playerPosition.ToPoint();
+
+            foreach (Rectangle platform in caveBlocks)
+                if (player.Intersects(platform))
+                {
+                    playerPosition.X += -rockmanSpeed.X;
+                    player.Location = playerPosition.ToPoint();
+                }
+
+            if (!onGround)
+            {
+                rockmanSpeed.Y += gravity;
+            }
+            if (!onGround)
+            {
+                rockmanSpeed.Y += gravity;
+                if (rockmanSpeed.Y < 0 && keyboardState.IsKeyUp(Keys.Space))
+                    rockmanSpeed.Y /= 1.5f;
+
+            }
+
+            else if (keyboardState.IsKeyDown(Keys.Space) && onGround)
+            {
+                rockmanSpeed.Y = -jumpSpeed;
+                onGround = false;
+            }
+            else
+            {
+                rockmanSpeed.Y += gravity;
+            }
+
+            playerPosition.Y += rockmanSpeed.Y;
+            player.Location = playerPosition.ToPoint();
+
+            foreach (Rectangle platform in caveBlocks)
+                if (player.Intersects(platform))
+                {
+                    if (rockmanSpeed.Y > 0f) // player lands on platform
+                    {
+                        onGround = true;
+                        rockmanSpeed.Y = 0;
+                        playerPosition.Y = platform.Top - player.Height;
+                    }
+                    else // hits bottom of platform
+                    {
+                        rockmanSpeed.Y = 0;
+                        playerPosition.Y = platform.Bottom;
+                    }
+                    player.Location = playerPosition.ToPoint();
+                }
+
+            if (player.Top <= 0)
+            {
+                playerPosition.Y += -rockmanSpeed.Y;
+            }
+           
+
+            // start screen
             if (screen == Screen.startScreen)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
                     screen = Screen.firstLevel;
             }
+
+            //first level
             else if (screen == Screen.firstLevel)
             {
-                rockmanSpeed.X = 0f;
-                if (keyboardState.IsKeyDown(Keys.A))
-                    rockmanSpeed.X += -4f;
-                if (keyboardState.IsKeyDown(Keys.D))
-                    rockmanSpeed.X += 4f;
-
-                playerPosition.X += rockmanSpeed.X;
-                player.Location = playerPosition.ToPoint();
-
-                foreach (Rectangle platform in caveBlocks)
-                    if (player.Intersects(platform))
-                    {
-                        playerPosition.X += -rockmanSpeed.X;
-                        player.Location = playerPosition.ToPoint();
-                    }
-
-                if (!onGround)
-                {
-                    rockmanSpeed.Y += gravity;
-                }
-                if (!onGround)
-                {
-                    rockmanSpeed.Y += gravity;
-                    if (rockmanSpeed.Y < 0 && keyboardState.IsKeyUp(Keys.Space))
-                        rockmanSpeed.Y /= 1.5f;
-
-                }
-
-                else if (keyboardState.IsKeyDown(Keys.Space) && onGround)
-                {
-                    rockmanSpeed.Y = -jumpSpeed;
-                    onGround = false;
-                }
-                else
-                {
-                    rockmanSpeed.Y += gravity;
-                }
-
-                playerPosition.Y += rockmanSpeed.Y;
-                player.Location = playerPosition.ToPoint();
-
-                foreach (Rectangle platform in caveBlocks)
-                    if (player.Intersects(platform))
-                    {
-                        if (rockmanSpeed.Y > 0f) // player lands on platform
-                        {
-                            onGround = true;
-                            rockmanSpeed.Y = 0;
-                            playerPosition.Y = platform.Top - player.Height;
-                        }
-                        else // hits bottom of platform
-                        {
-                            rockmanSpeed.Y = 0;
-                            playerPosition.Y = platform.Bottom;
-                        }
-                        player.Location = playerPosition.ToPoint();
-                    }
-
-                if (player.Top <= 0)
-                {
-                    playerPosition.Y += -rockmanSpeed.Y;
-                }
                 if (player.Left <= 0 || player.Right >= 1000)
                 {
                     playerPosition.X += -rockmanSpeed.X;
@@ -203,27 +212,74 @@ namespace final_project_platformer
                     caveBlocks.Add(new Rectangle(810, 125, 80, 80));
                     caveBlocks.Add(new Rectangle(890, 125, 80, 80));
                     caveBlocks.Add(new Rectangle(970, 125, 80, 80));
+
                 }
 
                 if (portalRect.Intersects(player))
                 {
                     screen = Screen.secondLevel;
+                    playerPosition = new Vector2(10, 10);
                 }
 
-                else if (screen == Screen.secondLevel)
-                {
-
-                }
-
-
-
-
-
-
-
-
-                    base.Update(gameTime);
             }
+            //second level
+            else if (screen == Screen.secondLevel)
+            {
+                if (player.Left <= 0 && player.Y < 125 || player.Right >= 1000 || player.Left <= 0 && player.Y > 330)
+                {
+                    playerPosition.X += -rockmanSpeed.X;
+                }
+                caveBlocks.Clear();
+                portalRect = new Rectangle(10, 10, 70, 90);
+                caveBlocks.Add(new Rectangle(0, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(80, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(160, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(240, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(310, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(390, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(470, 125, 80, 80));
+                caveBlocks.Add(new Rectangle(0, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(80, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(160, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(240, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(310, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(390, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(470, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(550, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(630, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(710, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(790, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(870, 330, 80, 80));
+                caveBlocks.Add(new Rectangle(950, 330, 80, 80));
+                
+                if (player.Right <= 470 && player.Y > 130)
+                {
+                    caveBlocks.Add(new Rectangle(470, 250, 80, 80));
+                    keyRect = new Rectangle(570, 260, 30, 60);
+                }
+
+                if (player.Right < -1)
+                {
+                    playerPosition.X = 600;
+                    playerPosition.Y = 100;
+
+                }
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+                base.Update(gameTime);
+            
         }
 
         protected override void Draw(GameTime gameTime)
@@ -260,6 +316,17 @@ namespace final_project_platformer
                 _spriteBatch.Draw(background2Texture, window, Color.White);
                 _spriteBatch.Draw(background3Texture, window, Color.White);
                 _spriteBatch.Draw(secondLvlBgTexture, window, Color.White);
+                _spriteBatch.Draw(portalTexture, portalRect, Color.White);
+                foreach (Rectangle platform in caveBlocks)
+                    _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
+                _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
+
+                if (player.Right <= 470 && player.Y > 130)
+                {
+                    _spriteBatch.Draw(keyTexture, keyRect, Color.White);
+                }
+            
+                    
             }
 
             _spriteBatch.End();
