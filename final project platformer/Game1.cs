@@ -22,7 +22,7 @@ namespace final_project_platformer
 
        
         Rectangle window, player, spikeRect, keyRect, portalRect;
-        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture,portalTexture ;
+        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
@@ -34,7 +34,9 @@ namespace final_project_platformer
         bool onGround = false;
         Screen screen;
         SpriteFont title;
-
+        private bool islocked = false;
+        private bool gateopen = false;
+        private bool keycollected = false;
 
 
         public Game1()
@@ -75,8 +77,6 @@ namespace final_project_platformer
             caveBlocks.Add(new Rectangle(-40, 170, 80, 80));
             caveBlocks.Add(new Rectangle(40, 170, 80, 80));
             
-
-            spikeRect = new Rectangle(390, 280, 20, 60);
             keyRect = new Rectangle(20, 105, 30, 60);
             portalRect = new Rectangle(900, 10, 70, 90);
 
@@ -84,15 +84,12 @@ namespace final_project_platformer
             playerPosition = new Vector2(10, 700);
             player = new Rectangle(10, 700, 60, 80);
 
-           
-
                 base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
             caveBlockTexture = Content.Load<Texture2D>("caveBlock");
             background1Texture = Content.Load<Texture2D>("background1");
             background2Texture = Content.Load<Texture2D>("background2");
@@ -104,6 +101,7 @@ namespace final_project_platformer
             keyTexture = Content.Load<Texture2D>("key");
             portalTexture = Content.Load<Texture2D>("portal");
             title = Content.Load<SpriteFont>("title");
+            wallportalTexture = Content.Load<Texture2D>("wallportal");
 
             // TODO: use this.Content to load your game content here
         }
@@ -179,7 +177,6 @@ namespace final_project_platformer
                 playerPosition.Y += -rockmanSpeed.Y;
             }
            
-
             // start screen
             if (screen == Screen.startScreen)
             {
@@ -190,6 +187,9 @@ namespace final_project_platformer
             //first level
             else if (screen == Screen.firstLevel)
             {
+
+                spikeRect = new Rectangle(390, 280, 20, 60);
+
                 if (player.Left <= 0 || player.Right >= 1000)
                 {
                     playerPosition.X += -rockmanSpeed.X;
@@ -212,23 +212,28 @@ namespace final_project_platformer
                     caveBlocks.Add(new Rectangle(810, 125, 80, 80));
                     caveBlocks.Add(new Rectangle(890, 125, 80, 80));
                     caveBlocks.Add(new Rectangle(970, 125, 80, 80));
-
+                    keycollected = true;
+                    
                 }
 
                 if (portalRect.Intersects(player))
                 {
                     screen = Screen.secondLevel;
                     playerPosition = new Vector2(10, 10);
+                    keycollected = false;
                 }
 
             }
             //second level
             else if (screen == Screen.secondLevel)
             {
+                spikeRect = new Rectangle(810, 280, 20, 60);
+                
                 if (player.Left <= 0 && player.Y < 125 || player.Right >= 1000 || player.Left <= 0 && player.Y > 330)
                 {
                     playerPosition.X += -rockmanSpeed.X;
                 }
+
                 caveBlocks.Clear();
                 portalRect = new Rectangle(10, 10, 70, 90);
                 caveBlocks.Add(new Rectangle(0, 125, 80, 80));
@@ -254,29 +259,40 @@ namespace final_project_platformer
                 
                 if (player.Right <= 470 && player.Y > 130)
                 {
+                    islocked = true;
+                }
+
+                if (islocked)
+                {
                     caveBlocks.Add(new Rectangle(470, 250, 80, 80));
                     keyRect = new Rectangle(570, 260, 30, 60);
                 }
 
                 if (player.Right < -1)
                 {
-                    playerPosition.X = 600;
-                    playerPosition.Y = 100;
+                    playerPosition.X = 930;
+                    playerPosition.Y = 250;
 
                 }
 
+                if (player.Intersects(keyRect))
+                {
+                   gateopen = true;
+                    keycollected = true;
+                }
+                if (gateopen)
+                {
+                    caveBlocks.Remove(new Rectangle(870, 330, 80, 80));
+                    caveBlocks.Remove(new Rectangle(950, 330, 80, 80));
+                }
 
-
-
+                if (player.Intersects(spikeRect) || player.Top > 1000)
+                {
+                    playerPosition.Y = 10;
+                    playerPosition.X = 10;
+                }
 
             }
-
-
-
-
-
-
-
 
                 base.Update(gameTime);
             
@@ -306,7 +322,10 @@ namespace final_project_platformer
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
                 _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
-                _spriteBatch.Draw(keyTexture, keyRect, Color.White);
+                if (keycollected == false)
+                {
+                    _spriteBatch.Draw(keyTexture, keyRect, Color.White);
+                }
                 _spriteBatch.Draw(portalTexture, portalRect, Color.White);
             }
 
@@ -320,17 +339,19 @@ namespace final_project_platformer
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
                 _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
-
-                if (player.Right <= 470 && player.Y > 130)
+                
+                if (islocked)
                 {
-                    _spriteBatch.Draw(keyTexture, keyRect, Color.White);
+                    if (keycollected == false)
+                    {
+                        _spriteBatch.Draw(keyTexture, keyRect, Color.White);
+                    }
+                    _spriteBatch.Draw(wallportalTexture, new Vector2(-3, 205), Color.White);
                 }
-            
-                    
+                _spriteBatch.Draw(spikeTexture, new Vector2(800, 277), Color.White);
             }
 
             _spriteBatch.End();
-
 
             base.Draw(gameTime);
         }
