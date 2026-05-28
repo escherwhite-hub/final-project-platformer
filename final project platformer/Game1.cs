@@ -12,7 +12,8 @@ namespace final_project_platformer
     {
         startScreen,
         firstLevel,
-        secondLevel
+        secondLevel,
+        thirdLevel
         
     }
     public class Game1 : Game
@@ -22,15 +23,15 @@ namespace final_project_platformer
 
        
         Rectangle window, player, spikeRect, keyRect, portalRect;
-        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture;
+        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
-        Texture2D RockmanIdleTexture;
+        Texture2D RockmanIdleTexture, rockmanJumpTexture, rockmanTexture, rockmanFallingTexture;
         Vector2 rockmanSpeed, keySpeed;
         Vector2 playerPosition;
         float gravity = 0.2f; // This is how fast player accelerated downwards
-        float jumpSpeed = 13f; // This will determine the strength of the jump
+        float jumpSpeed = 9.2f; // This will determine the strength of the jump
         bool onGround = false;
         Screen screen;
         SpriteFont title;
@@ -102,6 +103,10 @@ namespace final_project_platformer
             portalTexture = Content.Load<Texture2D>("portal");
             title = Content.Load<SpriteFont>("title");
             wallportalTexture = Content.Load<Texture2D>("wallportal");
+            floorPortalTexture = Content.Load<Texture2D>("floorportal");
+            rockmanJumpTexture = Content.Load<Texture2D>("rockmanjump");
+            rockmanFallingTexture = Content.Load<Texture2D>("falling");
+            rockmanTexture = rockmanJumpTexture;
 
             // TODO: use this.Content to load your game content here
         }
@@ -132,24 +137,26 @@ namespace final_project_platformer
 
             if (!onGround)
             {
-                rockmanSpeed.Y += gravity;
-            }
-            if (!onGround)
-            {
+                rockmanTexture = rockmanJumpTexture;
                 rockmanSpeed.Y += gravity;
                 if (rockmanSpeed.Y < 0 && keyboardState.IsKeyUp(Keys.Space))
                     rockmanSpeed.Y /= 1.5f;
 
             }
-
             else if (keyboardState.IsKeyDown(Keys.Space) && onGround)
             {
                 rockmanSpeed.Y = -jumpSpeed;
                 onGround = false;
+               
             }
             else
             {
                 rockmanSpeed.Y += gravity;
+            }
+
+            if (rockmanSpeed.Y > 1)
+            {
+                rockmanTexture = rockmanFallingTexture;
             }
 
             playerPosition.Y += rockmanSpeed.Y;
@@ -161,6 +168,7 @@ namespace final_project_platformer
                     if (rockmanSpeed.Y > 0f) // player lands on platform
                     {
                         onGround = true;
+                        rockmanTexture = RockmanIdleTexture; 
                         rockmanSpeed.Y = 0;
                         playerPosition.Y = platform.Top - player.Height;
                     }
@@ -201,7 +209,7 @@ namespace final_project_platformer
                     playerPosition.X = 10;
                 }
 
-                if (player.Intersects(keyRect))
+                if (player.Intersects(keyRect) && !keycollected)
                 {
                     caveBlocks.Add(new Rectangle(330, 125, 80, 80));
                     caveBlocks.Add(new Rectangle(410, 125, 80, 80));
@@ -228,7 +236,8 @@ namespace final_project_platformer
             else if (screen == Screen.secondLevel)
             {
                 spikeRect = new Rectangle(810, 280, 20, 60);
-                
+                spikeRect = new Rectangle(260, 550, 20, 60);
+
                 if (player.Left <= 0 && player.Y < 125 || player.Right >= 1000 || player.Left <= 0 && player.Y > 330)
                 {
                     playerPosition.X += -rockmanSpeed.X;
@@ -256,7 +265,17 @@ namespace final_project_platformer
                 caveBlocks.Add(new Rectangle(790, 330, 80, 80));
                 caveBlocks.Add(new Rectangle(870, 330, 80, 80));
                 caveBlocks.Add(new Rectangle(950, 330, 80, 80));
-                
+                caveBlocks.Add(new Rectangle(790, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(870, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(950, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(160, 600, 80, 80));
+                caveBlocks.Add(new Rectangle(240, 600, 80, 80));
+                caveBlocks.Add(new Rectangle(310, 600, 80, 80));
+                caveBlocks.Add(new Rectangle(390, 620, 80, 80));
+                caveBlocks.Add(new Rectangle(470, 620, 80, 80));
+                caveBlocks.Add(new Rectangle(550, 620, 80, 80));
+                caveBlocks.Add(new Rectangle(630, 620, 80, 80));
+
                 if (player.Right <= 470 && player.Y > 130)
                 {
                     islocked = true;
@@ -292,9 +311,23 @@ namespace final_project_platformer
                     playerPosition.X = 10;
                 }
 
+                if (player.X < 630 && player.Y > 330)
+                {
+                    caveBlocks.Remove(new Rectangle(390, 620, 80, 80));
+                    caveBlocks.Remove(new Rectangle(470, 620, 80, 80));
+                }
+                if (player.X < 240 && player.Y > 810)
+                {
+                    screen = Screen.thirdLevel;
+                }
+
+            }
+            else if (screen == Screen.thirdLevel)
+            {
+                playerPosition = new Vector2(10, 10);
             }
 
-                base.Update(gameTime);
+            base.Update(gameTime);
             
         }
 
@@ -321,7 +354,7 @@ namespace final_project_platformer
                 _spriteBatch.Draw(spikeTexture, new Vector2(380, 277), Color.White);
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
-                _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
+                _spriteBatch.Draw(rockmanTexture, player, Color.White);
                 if (keycollected == false)
                 {
                     _spriteBatch.Draw(keyTexture, keyRect, Color.White);
@@ -336,9 +369,10 @@ namespace final_project_platformer
                 _spriteBatch.Draw(background3Texture, window, Color.White);
                 _spriteBatch.Draw(secondLvlBgTexture, window, Color.White);
                 _spriteBatch.Draw(portalTexture, portalRect, Color.White);
+                _spriteBatch.Draw(floorPortalTexture, new Vector2(0,770), Color.White);
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
-                _spriteBatch.Draw(RockmanIdleTexture, player, Color.White);
+                _spriteBatch.Draw(rockmanTexture, player, Color.White);
                 
                 if (islocked)
                 {
@@ -349,9 +383,19 @@ namespace final_project_platformer
                     _spriteBatch.Draw(wallportalTexture, new Vector2(-3, 205), Color.White);
                 }
                 _spriteBatch.Draw(spikeTexture, new Vector2(800, 277), Color.White);
+                _spriteBatch.Draw(spikeTexture, new Vector2(250, 547), Color.White);
+
+            }
+            else if (screen == Screen.thirdLevel)
+            {
+                _spriteBatch.Draw(background1Texture, window, Color.White);
+                _spriteBatch.Draw(background2Texture, window, Color.White);
+                _spriteBatch.Draw(background3Texture, window, Color.White);
+                _spriteBatch.Draw(firsLvlBgTexture, window, Color.White);
+                _spriteBatch.Draw(rockmanTexture, player, Color.White);
             }
 
-            _spriteBatch.End();
+                _spriteBatch.End();
 
             base.Draw(gameTime);
         }
