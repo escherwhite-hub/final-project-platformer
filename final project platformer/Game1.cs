@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace final_project_platformer
 {
@@ -24,7 +25,7 @@ namespace final_project_platformer
 
        
         Rectangle window, player, spikeRect, keyRect, portalRect, mushroomRect, roofspikeRect;
-        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture;
+        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, rectangleTexture, lightTexture;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
@@ -42,6 +43,7 @@ namespace final_project_platformer
         private bool islocked = false;
         private bool gateopen = false;
         private bool keycollected = false;
+        Texture2D pixel;
 
 
         public Game1()
@@ -107,17 +109,22 @@ namespace final_project_platformer
             firsLvlBgTexture = Content.Load<Texture2D>("background4b");
             secondLvlBgTexture = Content.Load<Texture2D>("background4a");
             RockmanIdleTexture = Content.Load<Texture2D>("rockmanidle");
+            lightTexture = Content.Load<Texture2D>("light");
             spikeTexture = Content.Load<Texture2D>("spike");
             keyTexture = Content.Load<Texture2D>("key");
             portalTexture = Content.Load<Texture2D>("portal");
             mushroomTexture = Content.Load<Texture2D>("mushroom");
             roofspikeTexture = Content.Load<Texture2D>("roofspike");
+            rectangleTexture = Content.Load<Texture2D>("rectangle");
             title = Content.Load<SpriteFont>("title");
             wallportalTexture = Content.Load<Texture2D>("wallportal");
             floorPortalTexture = Content.Load<Texture2D>("floorportal");
             rockmanJumpTexture = Content.Load<Texture2D>("rockmanjump");
             rockmanFallingTexture = Content.Load<Texture2D>("falling");
             rockmanTexture = rockmanJumpTexture;
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -200,8 +207,10 @@ namespace final_project_platformer
             if (screen == Screen.startScreen)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed)
-                    screen = Screen.firstLevel;
-                
+                    screen = Screen.fourthlevel;
+                playerPosition.Y = 10;
+                playerPosition.X = 10;
+
 
             }
 
@@ -404,9 +413,34 @@ namespace final_project_platformer
                 if (portalRect.Intersects(player))
                 {
                     screen = Screen.fourthlevel;
+                    playerPosition.Y = 10;
+                    playerPosition.X = 10;
                 }
 
             }
+            else if (screen == Screen.fourthlevel)
+            {
+                caveBlocks.Clear();
+                keyRect = new Rectangle(650, 30, 30, 60);
+                portalRect = new Rectangle(890, 470, 70, 90);
+                caveBlocks.Add(new Rectangle(0, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(80, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(160, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(260, 370, 80, 80));
+                caveBlocks.Add(new Rectangle(340, 370, 80, 80));
+                caveBlocks.Add(new Rectangle(420, 370, 80, 80));
+                caveBlocks.Add(new Rectangle(500, 370, 80, 80));
+                caveBlocks.Add(new Rectangle(600, 100, 80, 80));
+                caveBlocks.Add(new Rectangle(680, 100, 80, 80));
+                caveBlocks.Add(new Rectangle(760, 100, 80, 80));
+                caveBlocks.Add(new Rectangle(760, 375, 80, 80));
+                caveBlocks.Add(new Rectangle(840, 375, 80, 80));
+                caveBlocks.Add(new Rectangle(920, 375, 80, 80));
+                caveBlocks.Add(new Rectangle(500, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(580, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(660, 720, 80, 80));
+            }
+
 
             base.Update(gameTime);
             
@@ -492,6 +526,29 @@ namespace final_project_platformer
                 {
                     _spriteBatch.Draw(portalTexture, portalRect, Color.White);
                 }
+            }
+
+            
+
+            
+
+            if (screen == Screen.fourthlevel)
+            {
+                _spriteBatch.Draw(background1Texture, window, Color.White);
+                _spriteBatch.Draw(background2Texture, window, Color.White);
+                _spriteBatch.Draw(background3Texture, window, Color.White);
+                _spriteBatch.Draw(secondLvlBgTexture, window, Color.White);
+                _spriteBatch.Draw(rockmanTexture, player, Color.White);
+                foreach (Rectangle platform in caveBlocks)
+                    _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
+                _spriteBatch.Draw(mushroomTexture, mushroomRect, Color.White);
+
+                
+
+
+
+
+
             }
 
                 _spriteBatch.End();
