@@ -85,6 +85,18 @@
 /processorParam:TextureFormat=Color
 /build:caveBlock.png
 
+#begin darkness.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:darkness.png
+
 #begin falling.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -108,6 +120,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:floorportal.png
+
+#begin info.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:info.spritefont
 
 #begin key.png
 /importer:TextureImporter
@@ -168,6 +187,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:rockmanidle.png
+
+#begin rockmanidlechain.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:rockmanidlechain.png
 
 #begin rockmanjump.png
 /importer:TextureImporter
