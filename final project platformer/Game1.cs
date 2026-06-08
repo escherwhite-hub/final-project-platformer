@@ -24,8 +24,8 @@ namespace final_project_platformer
         private SpriteBatch _spriteBatch;
 
        
-        Rectangle window, player, spikeRect, keyRect, portalRect, mushroomRect, roofspikeRect;
-        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, darknessTexture;
+        Rectangle window, player, spikeRect, keyRect, portalRect, mushroomRect, roofspikeRect, skeletonRect;
+        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, darknessTexture, skeletonTexture;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
@@ -33,7 +33,7 @@ namespace final_project_platformer
         List<Rectangle> spikes;
 
         Texture2D RockmanIdleTexture, rockmanJumpTexture, rockmanTexture, rockmanFallingTexture,RockmanIdlechainTexture;
-        Vector2 rockmanSpeed, keySpeed;
+        Vector2 rockmanSpeed, skeletonSpeed;
         Vector2 playerPosition;
         float gravity = 0.2f; // This is how fast player accelerated downwards
         float jumpSpeed = 9.2f; // This will determine the strength of the jump
@@ -98,6 +98,8 @@ namespace final_project_platformer
             playerPosition = new Vector2(10, 700);
             player = new Rectangle(10, 700, 60, 80);
             roofspikeRect = new Rectangle(610, 180, 60, 220);
+            skeletonRect = new Rectangle(0, 10, 10, 30);
+            skeletonSpeed = new Vector2(1,0);
 
                 base.Initialize();
         }
@@ -125,6 +127,7 @@ namespace final_project_platformer
             RockmanIdlechainTexture = Content.Load<Texture2D>("rockmanidlechain");
             rockmanFallingTexture = Content.Load<Texture2D>("falling");
             darknessTexture = Content.Load<Texture2D>("darkness");
+            skeletonTexture = Content.Load<Texture2D>("skeleton");
             rockmanTexture = rockmanJumpTexture;
             
 
@@ -421,9 +424,17 @@ namespace final_project_platformer
             }
             else if (screen == Screen.fourthlevel)
             {
+                skeletonSpeed.X += skeletonRect.X;
+
+                if (skeletonRect.X > 600)
+                {
+                    skeletonSpeed.X *= -1;
+                }
+
                 spikes.Clear();
                 spikes.Add(new Rectangle(440, 667, 20, 60));
-                
+                spikes.Add(new Rectangle(650, 377, 20, 60));
+
 
                 caveBlocks.Clear();
                 caveBlocks.Add(new Rectangle(0, 720, 80, 80));
@@ -434,9 +445,32 @@ namespace final_project_platformer
                 caveBlocks.Add(new Rectangle(760, 720, 80, 80));
                 caveBlocks.Add(new Rectangle(840, 720, 80, 80));
                 caveBlocks.Add(new Rectangle(920, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(-30, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(150, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(230, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(560, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(640, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(720, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(920, 430, 80, 80));
+                caveBlocks.Add(new Rectangle(0, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(80, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(160, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(240, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(310, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(390, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(470, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(550, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(630, 150, 80, 80));
+                caveBlocks.Add(new Rectangle(710, 150, 80, 80));
+                
+
+
+
+
 
                 mushrooms.Clear();
                 mushrooms.Add(new Rectangle(5, 667, 80, 60));
+                mushrooms.Add(new Rectangle(915, 377, 80, 60));
 
                 foreach (Rectangle mushroom in mushrooms)
                     if (player.Intersects(mushroom))
@@ -450,6 +484,17 @@ namespace final_project_platformer
                         playerPosition.Y = 10;
                         playerPosition.X = 800;
                     }
+                if (player.Top > 1000)
+                {
+                    playerPosition.Y = 10;
+                    playerPosition.X = 800;
+                }
+
+                
+
+
+
+
 
             }
 
@@ -558,10 +603,12 @@ namespace final_project_platformer
                 foreach (Rectangle mushroom in mushrooms)
                     _spriteBatch.Draw(mushroomTexture, mushroom, Color.White);
                 _spriteBatch.Draw(spikeTexture, new Vector2(430, 665), Color.White);
+                _spriteBatch.Draw(spikeTexture, new Vector2(640, 375), Color.White);
+                _spriteBatch.Draw(skeletonTexture, skeletonRect, Color.White);
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
                 _spriteBatch.Draw(mushroomTexture, mushroomRect, Color.White);
-                _spriteBatch.Draw(darknessTexture, new Vector2(playerPosition.X - 1475, playerPosition.Y - 1475), Color.White * 0.95f);
+                //_spriteBatch.Draw(darknessTexture, new Vector2(playerPosition.X - 1475, playerPosition.Y - 1475), Color.White * 0.95f);
                 
 
 
