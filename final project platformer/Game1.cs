@@ -25,8 +25,8 @@ namespace final_project_platformer
         private SpriteBatch _spriteBatch;
 
        
-        Rectangle window, player, spikeRect, keyRect, portalRect, mushroomRect, roofspikeRect, skeletonRect;
-        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, darknessTexture, skeletonTexture;
+        Rectangle window, player, spikeRect, keyRect, portalRect, mushroomRect, roofspikeRect, skeletonRect, startbuttonRect, exitbuttonRect;
+        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, darknessTexture, skeletonTexture, startbuttonTexture, exitbuttonTexture, signTexture;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
@@ -101,8 +101,10 @@ namespace final_project_platformer
             roofspikeRect = new Rectangle(610, 180, 45, 220);
             skeletonRect = new Rectangle(20, 117, 20, 60);
             skeletonSpeed = new Vector2(1,0);
+            startbuttonRect = new Rectangle(400, 400, 200,90);
+            exitbuttonRect = new Rectangle(400, 510, 200, 90);
 
-                base.Initialize();
+            base.Initialize();
         }
 
         protected override void LoadContent()
@@ -129,6 +131,9 @@ namespace final_project_platformer
             rockmanFallingTexture = Content.Load<Texture2D>("falling");
             darknessTexture = Content.Load<Texture2D>("darkness");
             skeletonTexture = Content.Load<Texture2D>("skeleton");
+            startbuttonTexture = Content.Load<Texture2D>("startbutton");
+            exitbuttonTexture = Content.Load<Texture2D>("exitbutton");
+            signTexture = Content.Load<Texture2D>("sign");
             rockmanTexture = rockmanJumpTexture;
             
 
@@ -213,10 +218,11 @@ namespace final_project_platformer
             // start screen
             if (screen == Screen.startScreen)
             {
-                if (mouseState.LeftButton == ButtonState.Pressed)
+                if (startbuttonRect.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
                     screen = Screen.firstLevel;
-               
 
+                if (exitbuttonRect.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
+                    Exit();
 
 
             }
@@ -415,7 +421,7 @@ namespace final_project_platformer
                 if (portalRect.Intersects(player))
                 {
                     screen = Screen.fourthLevel;
-                    playerPosition.Y = 700;
+                    playerPosition.Y = 650;
                     playerPosition.X = 800;
                     jumpSpeed = 6f;
                 }
@@ -526,6 +532,8 @@ namespace final_project_platformer
                 _spriteBatch.Draw(background3Texture, window, Color.White);
                 _spriteBatch.Draw(secondLvlBgTexture, window, Color.White);
                 _spriteBatch.DrawString(title, "The Adventures of Squid Man!", new Vector2(50, 150), Color.White);
+                _spriteBatch.Draw(startbuttonTexture,startbuttonRect, Color.White);
+                _spriteBatch.Draw(exitbuttonTexture, exitbuttonRect, Color.White);
             }
              else if (screen == Screen.firstLevel)
             {
@@ -533,6 +541,7 @@ namespace final_project_platformer
                 _spriteBatch.Draw(background2Texture, window, Color.White);
                 _spriteBatch.Draw(background3Texture, window, Color.White);
                 _spriteBatch.Draw(firsLvlBgTexture, window, Color.White);
+                _spriteBatch.Draw(signTexture, new Vector2(200,695), Color.White);
                 _spriteBatch.Draw(spikeTexture, new Vector2(380, 277), Color.White);
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
