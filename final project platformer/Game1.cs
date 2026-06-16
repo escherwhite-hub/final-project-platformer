@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -32,6 +33,7 @@ namespace final_project_platformer
         List<Rectangle> caveBlocks;
         List<Rectangle> mushrooms;
         List<Rectangle> spikes;
+        SoundEffect jump, backgroundsound, crunch, keysound;
 
         Texture2D RockmanIdleTexture, rockmanJumpTexture, rockmanTexture, rockmanFallingTexture,RockmanIdlechainTexture;
         Vector2 rockmanSpeed, skeletonSpeed;
@@ -84,6 +86,7 @@ namespace final_project_platformer
             caveBlocks.Add(new Rectangle(450, 330, 80, 80));
             caveBlocks.Add(new Rectangle(-40, 170, 80, 80));
             caveBlocks.Add(new Rectangle(40, 170, 80, 80));
+            caveBlocks.Add(new Rectangle(0, -1, 1000, 1));
 
             mushrooms = new List<Rectangle>();
             mushrooms.Add(new Rectangle(160, 665, 80, 60));
@@ -134,6 +137,10 @@ namespace final_project_platformer
             startbuttonTexture = Content.Load<Texture2D>("startbutton");
             exitbuttonTexture = Content.Load<Texture2D>("exitbutton");
             signTexture = Content.Load<Texture2D>("sign");
+            jump = Content.Load<SoundEffect>("jumpsound");
+            backgroundsound = Content.Load<SoundEffect>("backgroundsound");
+            crunch = Content.Load<SoundEffect>("crunch");
+            keysound = Content.Load<SoundEffect>("keysound");
             rockmanTexture = rockmanJumpTexture;
             
 
@@ -148,6 +155,7 @@ namespace final_project_platformer
             keyboardState = Keyboard.GetState();
             this.Window.Title = mouseState.Position.ToString();
             mouseState = Mouse.GetState();
+            
 
             rockmanSpeed.X = 0f;
             if (keyboardState.IsKeyDown(Keys.A))
@@ -177,6 +185,7 @@ namespace final_project_platformer
             {
                 rockmanSpeed.Y = -jumpSpeed;
                 onGround = false;
+                jump.Play();
                
             }
             else
@@ -210,14 +219,12 @@ namespace final_project_platformer
                     player.Location = playerPosition.ToPoint();
                 }
 
-            if (player.Top <= 0)
-            {
-                playerPosition.Y += -rockmanSpeed.Y;
-            }
+            
            
             // start screen
             if (screen == Screen.startScreen)
             {
+                
                 if (startbuttonRect.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
                     screen = Screen.firstLevel;
 
@@ -240,6 +247,7 @@ namespace final_project_platformer
                 foreach (Rectangle spike in spikes)
                     if (player.Intersects(spike))
                     {
+                        crunch.Play();
                         playerPosition.Y = 700;
                         playerPosition.X = 10;
                     }
@@ -260,7 +268,8 @@ namespace final_project_platformer
                     caveBlocks.Add(new Rectangle(890, 125, 80, 80));
                     caveBlocks.Add(new Rectangle(970, 125, 80, 80));
                     keycollected = true;
-                    
+                    keysound.Play();
+
                 }
                 if (portalRect.Intersects(player))
                 {
@@ -311,6 +320,7 @@ namespace final_project_platformer
                 caveBlocks.Add(new Rectangle(470, 620, 80, 80));
                 caveBlocks.Add(new Rectangle(550, 620, 80, 80));
                 caveBlocks.Add(new Rectangle(630, 620, 80, 80));
+                caveBlocks.Add(new Rectangle(0, -1, 1000, 1));
 
                 if (player.Right <= 470 && player.Y > 130)
                 {
@@ -322,7 +332,11 @@ namespace final_project_platformer
                     caveBlocks.Add(new Rectangle(470, 250, 80, 80));
                     keyRect = new Rectangle(570, 260, 30, 60);
                 }
-
+                if (player.Top > 1000)
+                {
+                    playerPosition.Y = 10;
+                    playerPosition.X = 10;
+                }
                 if (player.Right < -1)
                 {
                     playerPosition.X = 930;
@@ -330,10 +344,11 @@ namespace final_project_platformer
 
                 }
 
-                if (player.Intersects(keyRect))
+                if (player.Intersects(keyRect) && !keycollected)
                 {
                    gateopen = true;
                     keycollected = true;
+                    keysound.Play();
                 }
                 if (gateopen)
                 {
@@ -344,6 +359,7 @@ namespace final_project_platformer
                 foreach (Rectangle spike in spikes)
                     if (player.Intersects(spike))
                     {
+                        crunch.Play();
                         playerPosition.Y = 10;
                         playerPosition.X = 10;
                     }
@@ -393,16 +409,19 @@ namespace final_project_platformer
                 caveBlocks.Add(new Rectangle(500, 720, 80, 80));
                 caveBlocks.Add(new Rectangle(580, 720, 80, 80));
                 caveBlocks.Add(new Rectangle(660, 720, 80, 80));
+                caveBlocks.Add(new Rectangle(0, -1, 1000, 1));
 
                 foreach (Rectangle mushroom in mushrooms)
                     if (player.Intersects(mushroom))
                 {
                     rockmanSpeed.Y = -11.5f;
                     onGround = false;
+                        jump.Play();
                 }
-                if (player.Intersects(keyRect))
+                if (player.Intersects(keyRect) && !keycollected)
                 {
                     keycollected = true;
+                    keysound.Play();
                 }
 
                 if (player.Intersects(roofspikeRect) || player.Top > 1000)
@@ -414,6 +433,7 @@ namespace final_project_platformer
                 foreach (Rectangle spike in spikes)
                     if (player.Intersects(spike))
                     {
+                        crunch.Play();
                         playerPosition.Y = 10;
                         playerPosition.X = 10;
                     }
@@ -467,6 +487,7 @@ namespace final_project_platformer
                 caveBlocks.Add(new Rectangle(550, 170, 80, 80));
                 caveBlocks.Add(new Rectangle(630, 170, 80, 80));
                 caveBlocks.Add(new Rectangle(710, 170, 80, 80));
+                caveBlocks.Add(new Rectangle(0, -1, 1000, 1));
 
                 mushrooms.Clear();
                 mushrooms.Add(new Rectangle(5, 667, 80, 60));
@@ -481,6 +502,7 @@ namespace final_project_platformer
                 foreach (Rectangle spike in spikes)
                     if (player.Intersects(spike))
                     {
+                        crunch.Play();
                         playerPosition.Y = 700;
                         playerPosition.X = 800;
                     }

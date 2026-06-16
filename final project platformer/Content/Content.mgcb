@@ -73,6 +73,12 @@
 /processorParam:TextureFormat=Color
 /build:background4b.png
 
+#begin backgroundsound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:backgroundsound.wav
+
 #begin caveBlock.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -84,6 +90,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:caveBlock.png
+
+#begin crunch.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:crunch.wav
 
 #begin darkness.png
 /importer:TextureImporter
@@ -140,6 +152,12 @@
 /processorParam:TextureFormat=Compressed
 /build:info.spritefont
 
+#begin jumpsound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:jumpsound.wav
+
 #begin key.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -151,6 +169,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:key.png
+
+#begin keysound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:keysound.wav
 
 #begin light.png
 /importer:TextureImporter
