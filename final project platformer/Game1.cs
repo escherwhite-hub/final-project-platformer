@@ -26,14 +26,14 @@ namespace final_project_platformer
         private SpriteBatch _spriteBatch;
 
        
-        Rectangle window, player, spikeRect, keyRect, portalRect, mushroomRect, roofspikeRect, skeletonRect, startbuttonRect, exitbuttonRect;
-        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, darknessTexture, skeletonTexture, startbuttonTexture, exitbuttonTexture, signTexture;
+        Rectangle window, player, keyRect, portalRect, mushroomRect, roofspikeRect, skeletonRect, startbuttonRect, exitbuttonRect;
+        Texture2D caveBlockTexture, firsLvlBgTexture, secondLvlBgTexture, background1Texture, background2Texture, background3Texture, spikeTexture, keyTexture, portalTexture, wallportalTexture, floorPortalTexture, mushroomTexture, roofspikeTexture, darknessTexture, skeletonTexture, startbuttonTexture, exitbuttonTexture, signTexture, youwinTexture, wasdTexture,spaceTexture;
         MouseState mouseState;
         KeyboardState keyboardState;
         List<Rectangle> caveBlocks;
         List<Rectangle> mushrooms;
         List<Rectangle> spikes;
-        SoundEffect jump, backgroundsound, crunch, keysound;
+        SoundEffect jump, crunch, keysound;
 
         Texture2D RockmanIdleTexture, rockmanJumpTexture, rockmanTexture, rockmanFallingTexture,RockmanIdlechainTexture;
         Vector2 rockmanSpeed, skeletonSpeed;
@@ -138,9 +138,12 @@ namespace final_project_platformer
             exitbuttonTexture = Content.Load<Texture2D>("exitbutton");
             signTexture = Content.Load<Texture2D>("sign");
             jump = Content.Load<SoundEffect>("jumpsound");
-            backgroundsound = Content.Load<SoundEffect>("backgroundsound");
             crunch = Content.Load<SoundEffect>("crunch");
             keysound = Content.Load<SoundEffect>("keysound");
+            youwinTexture = Content.Load<Texture2D>("youwin");
+            wasdTexture = Content.Load<Texture2D>("controlswasd");
+            spaceTexture = Content.Load<Texture2D>("controlsspace");
+
             rockmanTexture = rockmanJumpTexture;
             
 
@@ -443,7 +446,7 @@ namespace final_project_platformer
                     screen = Screen.fourthLevel;
                     playerPosition.Y = 650;
                     playerPosition.X = 800;
-                    jumpSpeed = 6f;
+                    
                 }
 
             }
@@ -503,17 +506,17 @@ namespace final_project_platformer
                     if (player.Intersects(spike))
                     {
                         crunch.Play();
-                        playerPosition.Y = 700;
+                        playerPosition.Y = 650;
                         playerPosition.X = 800;
                     }
                 if (player.Top > 1000)
                 {
-                    playerPosition.Y = 700;
+                    playerPosition.Y = 650;
                     playerPosition.X = 800;
                 }
                 if (player.Intersects(skeletonRect))
                     {
-                        playerPosition.Y = 700;
+                        playerPosition.Y = 650;
                         playerPosition.X = 800;
                     }
                 skeletonRect.X += (int)skeletonSpeed.X;
@@ -536,14 +539,17 @@ namespace final_project_platformer
                 }
             }
 
+            
+           
 
-            base.Update(gameTime);
+
+                base.Update(gameTime);
             
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
 
@@ -556,6 +562,8 @@ namespace final_project_platformer
                 _spriteBatch.DrawString(title, "The Adventures of Squid Man!", new Vector2(50, 150), Color.White);
                 _spriteBatch.Draw(startbuttonTexture,startbuttonRect, Color.White);
                 _spriteBatch.Draw(exitbuttonTexture, exitbuttonRect, Color.White);
+                _spriteBatch.Draw(wasdTexture, new Vector2(750,570), Color.White);
+                _spriteBatch.Draw(spaceTexture, new Vector2(750,700), Color.White);
             }
              else if (screen == Screen.firstLevel)
             {
@@ -645,20 +653,23 @@ namespace final_project_platformer
                     _spriteBatch.Draw(mushroomTexture, mushroom, Color.White);
                 _spriteBatch.Draw(spikeTexture, new Vector2(430, 665), Color.White);
                 _spriteBatch.Draw(spikeTexture, new Vector2(640, 375), Color.White);
-                
+                _spriteBatch.Draw(portalTexture, portalRect, Color.White);
                 foreach (Rectangle platform in caveBlocks)
                     _spriteBatch.Draw(caveBlockTexture, platform, Color.White);
                 _spriteBatch.Draw(mushroomTexture, mushroomRect, Color.White);
                 _spriteBatch.Draw(skeletonTexture, skeletonRect, Color.White);
                 _spriteBatch.Draw(darknessTexture, new Vector2(playerPosition.X - 1475, playerPosition.Y - 1475), Color.White * 0.95f);
-
-
-
-
-
-
-
             }
+
+            else if (screen == Screen.finalLevel)
+            {
+                _spriteBatch.Draw(background1Texture, window, Color.White);
+                _spriteBatch.Draw(background2Texture, window, Color.White);
+                _spriteBatch.Draw(background3Texture, window, Color.White);
+                _spriteBatch.Draw(secondLvlBgTexture, window, Color.White);
+                _spriteBatch.Draw(youwinTexture, new Vector2(200, 300), Color.White);
+            }
+
 
                 _spriteBatch.End();
 
