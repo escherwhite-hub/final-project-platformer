@@ -279,61 +279,33 @@ namespace final_project_platformer
                     screen = Screen.secondLevel;
                     playerPosition = new Vector2(10, 10);
                     keycollected = false;
+                    keyRect.X = -100;
+                    SetLevel2();
+
+                    
+
+
                 }
             }
             //second level
             else if (screen == Screen.secondLevel)
             {
-                spikes.Clear();
-                spikes.Add(new Rectangle(810, 280, 20, 60));
-                spikes.Add(new Rectangle(260, 550, 20, 60));
+                
                 if (player.Left <= 0 && player.Y < 125 || player.Right >= 1000 || player.Left <= 0 && player.Y > 330)
                 {
                     playerPosition.X += -rockmanSpeed.X;
                 }
-                caveBlocks.Clear();
-                portalRect = new Rectangle(10, 10, 70, 90);
-                caveBlocks.Add(new Rectangle(0, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(80, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(160, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(240, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(310, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(390, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(470, 125, 80, 80));
-                caveBlocks.Add(new Rectangle(0, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(80, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(160, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(240, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(310, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(390, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(470, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(550, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(630, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(710, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(790, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(870, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(950, 330, 80, 80));
-                caveBlocks.Add(new Rectangle(790, 720, 80, 80));
-                caveBlocks.Add(new Rectangle(870, 720, 80, 80));
-                caveBlocks.Add(new Rectangle(950, 720, 80, 80));
-                caveBlocks.Add(new Rectangle(160, 600, 80, 80));
-                caveBlocks.Add(new Rectangle(240, 600, 80, 80));
-                caveBlocks.Add(new Rectangle(310, 600, 80, 80));
-                caveBlocks.Add(new Rectangle(390, 620, 80, 80));
-                caveBlocks.Add(new Rectangle(470, 620, 80, 80));
-                caveBlocks.Add(new Rectangle(550, 620, 80, 80));
-                caveBlocks.Add(new Rectangle(630, 620, 80, 80));
-                caveBlocks.Add(new Rectangle(0, -1, 1000, 1));
+                
 
                 if (player.Right <= 470 && player.Y > 130)
                 {
                     islocked = true;
+                    keyRect = new Rectangle(570, 260, 30, 60);
                 }
 
                 if (islocked)
                 {
                     caveBlocks.Add(new Rectangle(470, 250, 80, 80));
-                    keyRect = new Rectangle(570, 260, 30, 60);
                 }
                 if (player.Top > 1000)
                 {
@@ -349,7 +321,7 @@ namespace final_project_platformer
 
                 if (player.Intersects(keyRect) && !keycollected)
                 {
-                   gateopen = true;
+                    gateopen = true;
                     keycollected = true;
                     keysound.Play();
                 }
@@ -675,5 +647,47 @@ namespace final_project_platformer
 
             base.Draw(gameTime);
         }
+
+        public void SetLevel2()
+        {
+            caveBlocks.Clear();
+            portalRect = new Rectangle(10, 10, 70, 90);
+            caveBlocks.Add(new Rectangle(0, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(80, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(160, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(240, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(310, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(390, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(470, 125, 80, 80));
+            caveBlocks.Add(new Rectangle(0, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(80, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(160, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(240, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(310, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(390, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(470, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(550, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(630, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(710, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(790, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(870, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(950, 330, 80, 80));
+            caveBlocks.Add(new Rectangle(790, 720, 80, 80));
+            caveBlocks.Add(new Rectangle(870, 720, 80, 80));
+            caveBlocks.Add(new Rectangle(950, 720, 80, 80));
+            caveBlocks.Add(new Rectangle(160, 600, 80, 80));
+            caveBlocks.Add(new Rectangle(240, 600, 80, 80));
+            caveBlocks.Add(new Rectangle(310, 600, 80, 80));
+            caveBlocks.Add(new Rectangle(390, 620, 80, 80));
+            caveBlocks.Add(new Rectangle(470, 620, 80, 80));
+            caveBlocks.Add(new Rectangle(550, 620, 80, 80));
+            caveBlocks.Add(new Rectangle(630, 620, 80, 80));
+            caveBlocks.Add(new Rectangle(0, -1, 1000, 1));
+
+            spikes.Clear();
+            spikes.Add(new Rectangle(810, 280, 20, 60));
+            spikes.Add(new Rectangle(260, 550, 20, 60));
+        }
+
     }
 }
